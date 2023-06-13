@@ -1,0 +1,44 @@
+# system
+*._*
+.*DS_Store
+.AppleDouble/
+:2eDS_Store
+*.swp
+*~
+*#
+.#*
+
+# IDE's
+.idea/*
+.settings/*
+.project/*
+*.sublime-*
+*nbproject*
+.vscode/
+.history/
+
+# dependencies
+/node_modules
+package-lock.json
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/dist
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+src/resources/images/cached/*

@@ -1,0 +1,50 @@
+name: '[QA] Build & Deploy'
+
+on:
+  push:
+    branches:
+      - qa
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: '--max_old_space_size=4096'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install Dependecies
+        run: npm ci --force --legacy-peer-deps
+
+      - name: Build Project
+        run: npm run build:qa
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy app build to S3 Bucket
+        run: aws s3 sync ./build/ s3://qa.econform.com.br
+
+      # - name: Invalidation Cloudfront cache
+      #   run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DEV_CLOUDFRONT_DISTRIBUTION }} --paths "/*"
+#       - name: Get tag
+#         run: |
+#           echo "::set-env name=TAG_VERSION::$(cat package.json | grep -P -m 1 -o '(\d+\.\d+\.\d+)')"
+#         env:
+#           ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+
+#       - name: Update tags
+#         run: |
+#           sed -i -e "s/\.js/\.js?v=${{ env.TAG_VERSION }}/" build/index.html
+#           sed -i -e "s/\.css/\.css?v=${{ env.TAG_VERSION }}/" build/index.html
